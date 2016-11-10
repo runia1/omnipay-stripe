@@ -47,13 +47,7 @@ class DeleteCardRequest extends AbstractRequest
 
     public function getEndpoint()
     {
-        if ($this->getCustomerReference()) {
-            // Delete a card from a customer
-            return $this->endpoint.'/customers/'.
-                $this->getCustomerReference().'/cards/'.
-                $this->getCardReference();
-        }
-        // Delete the customer.  Oops?
-        return $this->endpoint.'/customers/'.$this->getCardReference();
+	      $cardReference = $this->getCardReference(false);
+        return $this->endpoint.'/customers/'.$cardReference->getCustomerId().'/sources/'.$cardReference->getCardId();
     }
 }
