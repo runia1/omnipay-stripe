@@ -5,6 +5,8 @@
  */
 namespace Omnipay\Stripe\Message;
 
+use Omnipay\Stripe\Model\CardReference;
+
 /**
  * Stripe Abstract Request.
  *
@@ -84,7 +86,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
      */
     public function getCustomerReference()
     {
-        return $this->getParameter('customerReference');
+	    return $this->getParameter('customerReference');
     }
 
     /**
@@ -99,6 +101,34 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->setParameter('customerReference', $value);
     }
+
+		/**
+		 * @param bool $serialize Determines whether the return value will be a string or object
+		 * @return string|CardReference
+		 */
+		public function getCardReference($serialize = true)
+		{
+			$value = parent::getCardReference();
+
+			if ($serialize) {
+				$value = (string)$value; //this calls __toString() in the CardReference class.
+			}
+
+			return $value;
+		}
+
+		/**
+		 * @param string|CardReference $value
+		 * @return AbstractRequest
+		 */
+		public function setCardReference($value)
+		{
+			if (!($value instanceof CardReference)) {
+				$value = new CardReference($value);
+			}
+
+			return parent::setCardReference($value);
+		}
 
     public function getMetadata()
     {
@@ -179,7 +209,6 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     {
         return $this->setParameter('source', $value);
     }
-
 
     /**
      * Get the card data.

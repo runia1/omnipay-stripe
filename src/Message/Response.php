@@ -6,6 +6,7 @@
 namespace Omnipay\Stripe\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
+use Omnipay\Stripe\Model\CardReference;
 
 /**
  * Stripe Response.
@@ -108,28 +109,41 @@ class Response extends AbstractResponse
     /**
      * Get a card reference, for createCard or createCustomer requests.
      *
-     * @return string|null
+     * @return string|CardReference
      */
-    public function getCardReference()
+    public function getCardReference($serialize = true)
     {
+	      //if the request was to create a new customer
         if (isset($this->data['object']) && 'customer' === $this->data['object']) {
-            if (!empty($this->data['default_card'])) {
-                return $this->data['default_card'];
-            }
-            if (!empty($this->data['id'])) {
-                return $this->data['id'];
+            if (!empty($this->data['id']) && !empty($this->data['default_source'])) {
+	            $cardReference = new CardReference();
+	            $cardReference->setCustomerId($this->data['id']);
+	            $cardReference->setCardId($this->data['default_source']);
+	            if ($serialize) {
+		            return (string)$cardReference; //this calls __toString() in the CardReference class.
+	            }
             }
         }
+        //if the request was to create a new card
         if (isset($this->data['object']) && 'card' === $this->data['object']) {
-            if (!empty($this->data['id'])) {
-                return $this->data['id'];
+            if (!empty($this->data['id']) && !empty($this->data['customer'])) {
+	            $cardReference = new CardReference();
+	            $cardReference->setCustomerId($this->data['customer']);
+	            $cardReference->setCardId($this->data['id']);
+	            if ($serialize) {
+		            return (string)$cardReference; //this calls __toString() in the CardReference class.
+	            }
             }
         }
+        //if the request was to create a new purchase
         if (isset($this->data['object']) && 'charge' === $this->data['object']) {
-            if (! empty($this->data['source'])) {
-                if (! empty($this->data['source']['id'])) {
-                    return $this->data['source']['id'];
-                }
+            if (!empty($this->data['source']) && !empty($this->data['source']['id']) && !empty($this->data['customer'])) {
+	            $cardReference = new CardReference();
+	            $cardReference->setCustomerId($this->data['customer']);
+	            $cardReference->setCardId($this->data['source']['id']);
+	            if ($serialize) {
+		            return (string)$cardReference; //this calls __toString() in the CardReference class.
+	            }
             }
         }
 

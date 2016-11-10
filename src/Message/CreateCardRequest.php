@@ -74,8 +74,6 @@ class CreateCardRequest extends AbstractRequest
 
         if ($this->getSource()) {
             $data['source'] = $this->getSource();
-        } elseif ($this->getCardReference()) {
-            $data['source'] = $this->getCardReference();
         } elseif ($this->getToken()) {
             $data['source'] = $this->getToken();
         } elseif ($this->getCard()) {
@@ -91,14 +89,13 @@ class CreateCardRequest extends AbstractRequest
         }
 
         return $data;
-    }
 
+    }
     public function getEndpoint()
     {
         if ($this->getCustomerReference()) {
             // Create a new card on an existing customer
-            return $this->endpoint.'/customers/'.
-                $this->getCustomerReference().'/cards';
+            return $this->endpoint.'/customers/'.$this->getCustomerReference().'/sources';
         }
         // Create a new customer and card
         return $this->endpoint.'/customers';
