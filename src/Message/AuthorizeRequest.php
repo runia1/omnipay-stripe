@@ -91,7 +91,7 @@ class AuthorizeRequest extends AbstractRequest
     }
 
     /**
-     * @return mixedgi
+     * @return mixed
      */
     public function getSource()
     {
@@ -194,11 +194,10 @@ class AuthorizeRequest extends AbstractRequest
 
         if ($this->getSource()) {
             $data['source'] = $this->getSource();
-        } elseif ($this->getCardReference()) {
-            $data['source'] = $this->getCardReference();
-            if ($this->getCustomerReference()) {
-                $data['customer'] = $this->getCustomerReference();
-            }
+        } elseif ($cardReference = $this->getCardReference(false)) {
+	          $data['source'] = $cardReference->getCardId();
+	          $this->setCustomerReference($cardReference->getCustomerId());
+	          $data['customer'] = $this->getCustomerReference();
         } elseif ($this->getToken()) {
             $data['source'] = $this->getToken();
             if ($this->getCustomerReference()) {
