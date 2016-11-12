@@ -57,9 +57,6 @@ class UpdateCardRequest extends AbstractRequest
             if ($card->getName()) {
                 $data['name'] = $card->getName();
             }
-            if ($card->getNumber()) {
-                $data['number'] = $card->getNumber();
-            }
             if ($card->getAddress1()) {
                 $data['address_line1'] = $card->getAddress1();
             }
